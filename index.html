@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>عيد ميلاد ايمان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700&family=Caveat:wght@500;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wine-900:#3a0f16;
+  --wine-800:#5a1a24;
+  --wine-700:#7a2436;
+  --wine-600:#93384a;
+  --wine-500:#a94a5c;
+  --rose-300:#d98a95;
+  --cream:#f4ebdd;
+  --cream-2:#efe2cd;
+  --gold:#c9a24a;
+  --ink:#2a1417;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;overflow-x:hidden;background:var(--cream);}
+body{
+  font-family:'Cairo',sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+  min-height:100svh;
+}
+.scene{
+  min-height:100vh;
+  min-height:100svh;
+  width:100%;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  padding:36px 16px 60px;
+  text-align:center;
+}
+.scene.active{display:flex;}
+.fade-in{animation:fadeIn .8s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+@keyframes shake{
+  10%,90%{transform:translateX(-2px);}
+  20%,80%{transform:translateX(4px);}
+  30%,50%,70%{transform:translateX(-8px);}
+  40%,60%{transform:translateX(8px);}
+}
+.shake{animation:shake .6s;}
+
+/* ---------- persistent corner decoration (roses + 2 coffee cups + books) ---------- */
+#decor{
+  position:fixed;left:10px;bottom:8px;z-index:5;
+  width:92px;height:80px;pointer-events:none;opacity:0.9;
+}
+#decor svg{width:100%;height:100%;}
+@media (max-width:480px){
+  #decor{width:64px;height:56px;left:6px;bottom:6px;opacity:0.8;}
+}
+
+/* ---------- petal transition overlay ---------- */
+#transitionOverlay{
+  position:fixed;inset:0;z-index:999;pointer-events:none;
+  opacity:0;background:var(--wine-900);
+  transition:opacity .25s ease;
+}
+#transitionOverlay.show{opacity:0.94;}
+.petal{
+  position:absolute;top:-40px;font-size:26px;opacity:0;
+}
+#transitionOverlay.show .petal{animation:petalFall 1.1s ease forwards;}
+@keyframes petalFall{
+  0%{opacity:0;transform:translateY(-40px) rotate(0deg) scale(0.6);}
+  15%{opacity:1;}
+  100%{opacity:0;transform:translateY(420px) rotate(260deg) scale(1.1);}
+}
+
+/* ---------- Scene 1: Lock ---------- */
+#scene-lock{
+  background:
+    radial-gradient(ellipse 260px 160px at 10% 15%, rgba(122,36,54,0.35), transparent 70%),
+    radial-gradient(ellipse 300px 180px at 90% 20%, rgba(122,36,54,0.30), transparent 70%),
+    radial-gradient(ellipse 320px 200px at 15% 85%, rgba(122,36,54,0.35), transparent 70%),
+    radial-gradient(ellipse 280px 180px at 88% 82%, rgba(122,36,54,0.28), transparent 70%),
+    radial-gradient(ellipse 500px 300px at 50% 50%, rgba(217,138,149,0.12), transparent 75%),
+    var(--cream);
+}
+.moon{
+  width:48px;height:48px;border-radius:50%;
+  background:var(--wine-800);
+  box-shadow:12px 4px 0 -5px var(--cream), inset -9px 0 0 0 var(--cream);
+  margin-bottom:6px;
+}
+.lock-icon{width:52px;height:52px;position:relative;margin:0 auto 8px;}
+.lock-icon svg{width:100%;height:100%;}
+.tag{font-family:'Aref Ruqaa',serif;font-size:15px;color:var(--wine-800);line-height:1.9;margin:10px 0 4px;}
+.tag b{color:var(--wine-900);}
+.date-label{
+  font-family:'Aref Ruqaa',serif;font-size:15px;color:var(--wine-800);
+  margin:18px 0 4px;
+}
+.hint{font-family:'EB Garamond',serif;font-style:italic;font-size:12px;color:var(--wine-600);margin-bottom:18px;letter-spacing:.5px;}
+.date-fields{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:18px;}
+.date-fields input{
+  width:56px;height:52px;text-align:center;font-size:18px;
+  border:1.5px solid rgba(122,36,54,0.4);border-radius:8px;
+  background:rgba(255,255,255,0.55);color:var(--wine-900);
+  font-family:'Cairo',sans-serif;
+}
+.date-fields input:focus{outline:2px solid var(--wine-600);}
+.date-fields input#yyyy{width:76px;}
+.date-fields span{color:var(--wine-700);font-size:20px;}
+.unlock-btn{
+  margin-top:4px;background:var(--wine-700);color:var(--cream-2);border:none;
+  padding:12px 34px;border-radius:30px;font-family:'Cairo',sans-serif;font-size:15px;
+  cursor:pointer;transition:background .2s;
+}
+.unlock-btn:hover{background:var(--wine-800);}
+
+/* ---------- Scene 2: Envelope ---------- */
+#scene-envelope{background:var(--cream);cursor:pointer;}
+.envelope{width:180px;height:130px;position:relative;transition:transform .4s;}
+.envelope .body{width:100%;height:100%;background:var(--wine-700);border-radius:4px;position:relative;box-shadow:0 8px 24px rgba(58,15,22,0.25);}
+.envelope .flap{position:absolute;top:0;left:0;width:100%;height:65px;background:var(--wine-800);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .5s ease;}
+.envelope .seal{position:absolute;top:50%;left:50%;transform:translate(-50%,-46%);width:28px;height:28px;border-radius:50%;background:var(--cream-2);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.envelope.opening .flap{transform:rotateX(180deg);}
+.open-hint{margin-top:26px;font-family:'EB Garamond',serif;font-style:italic;color:var(--wine-600);font-size:14px;}
+
+/* ---------- Scene 3: Poem ---------- */
+#scene-poem{
+  background:var(--wine-900);
+  background-image:radial-gradient(ellipse 400px 260px at 20% 10%, rgba(122,36,54,0.6), transparent 70%),
+                    radial-gradient(ellipse 420px 260px at 85% 90%, rgba(122,36,54,0.55), transparent 70%);
+  padding:48px 16px 70px;
+}
+.poem-card{max-width:480px;width:100%;}
+.poem-from{font-family:'EB Garamond',serif;font-style:italic;color:var(--gold);font-size:13px;letter-spacing:1px;margin-bottom:16px;}
+.poem-box{
+  background:var(--cream-2);
+  border:1px solid rgba(201,162,74,0.5);
+  border-radius:6px;
+  padding:22px 20px;
+  box-shadow:0 10px 26px rgba(0,0,0,0.3);
+}
+.poem-text{
+  font-family:'Aref Ruqaa',serif;
+  font-size:17px;line-height:1.85;
+  color:var(--wine-900);
+}
+.poem-text .line{display:block;}
+.poem-text .stanza{display:block;margin-bottom:10px;}
+.next-btn{
+  margin-top:26px;background:none;border:1px solid var(--gold);color:var(--gold);
+  padding:10px 26px;border-radius:30px;font-family:'Cairo',sans-serif;font-size:14px;cursor:pointer;
+  transition:background .2s;
+}
+.next-btn:hover{background:rgba(201,162,74,0.15);}
+
+/* ---------- Scene 4: Flowers divider ---------- */
+#scene-flowers{background:var(--cream);cursor:pointer;}
+.flower-field{
+  width:100%;max-width:600px;height:200px;border-radius:8px;overflow:hidden;position:relative;
+  background:
+    radial-gradient(circle at 12% 30%, #f5efe2 0 14px, transparent 15px),
+    radial-gradient(circle at 30% 65%, #7a2436 0 22px, transparent 23px),
+    radial-gradient(circle at 48% 25%, #c96b7a 0 20px, transparent 21px),
+    radial-gradient(circle at 65% 60%, #f5efe2 0 18px, transparent 19px),
+    radial-gradient(circle at 80% 30%, #93384a 0 24px, transparent 25px),
+    radial-gradient(circle at 92% 70%, #d98a95 0 16px, transparent 17px),
+    radial-gradient(circle at 20% 85%, #93384a 0 20px, transparent 21px),
+    radial-gradient(circle at 55% 88%, #f5efe2 0 16px, transparent 17px),
+    radial-gradient(circle at 75% 90%, #7a2436 0 18px, transparent 19px),
+    radial-gradient(circle at 5% 55%, #c96b7a 0 15px, transparent 16px),
+    radial-gradient(circle at 40% 45%, #93384a 0 18px, transparent 19px),
+    radial-gradient(circle at 88% 48%, #f5efe2 0 14px, transparent 15px),
+    #a94a5c;
+}
+.flowers-hint{margin-top:22px;font-family:'EB Garamond',serif;font-style:italic;color:var(--wine-600);font-size:14px;}
+
+/* ---------- Scene 5: Favorite person ---------- */
+#scene-favorite{
+  background:var(--wine-900);
+  background-image:
+    radial-gradient(ellipse 400px 300px at 10% 15%, rgba(122,36,54,0.5), transparent 70%),
+    radial-gradient(ellipse 400px 300px at 90% 85%, rgba(122,36,54,0.5), transparent 70%);
+  padding:48px 16px 70px;
+}
+.fav-title{font-family:'Caveat',cursive;font-weight:700;font-size:44px;color:var(--cream-2);transform:rotate(-3deg);margin-bottom:30px;}
+.song-card{
+  width:100%;max-width:340px;background:#161616;border-radius:10px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;text-decoration:none;margin:0 auto 40px;transition:transform .15s;
+}
+.song-card:hover{transform:translateY(-2px);}
+.song-art{width:44px;height:44px;border-radius:6px;background:var(--wine-700);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:19px;}
+.song-meta{flex:1;text-align:right;}
+.song-name{color:#f2f2f2;font-size:14px;font-weight:600;}
+.song-artist{color:#9b9b9b;font-size:12px;margin-top:2px;}
+.song-play{width:30px;height:30px;border-radius:50%;background:#1ed760;display:flex;align-items:center;justify-content:center;color:#111;font-size:12px;flex-shrink:0;}
+
+.cards-wrap{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;max-width:520px;margin:0 auto;}
+.polaroid{width:140px;background:#efe6d5;padding:9px 9px 30px;border-radius:2px;box-shadow:0 10px 20px rgba(0,0,0,0.35);transform:rotate(var(--r,0deg));position:relative;}
+.polaroid:nth-child(1){--r:-6deg;}
+.polaroid:nth-child(2){--r:3deg;}
+.polaroid:nth-child(3){--r:-2deg;}
+.scratch-wrap{width:100%;height:140px;position:relative;background:#1c1c1c;border-radius:1px;overflow:hidden;}
+.scratch-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.scratch-wrap canvas{position:absolute;top:0;left:0;width:100%;height:100%;cursor:pointer;touch-action:none;}
+.polaroid .cap{position:absolute;bottom:7px;left:0;right:0;text-align:center;font-family:'Caveat',cursive;font-size:15px;color:#3a2a20;}
+.scroll-hint{margin-top:36px;font-family:'EB Garamond',serif;font-style:italic;color:var(--rose-300);font-size:13px;cursor:pointer;}
+
+/* ---------- Scene 6: Final message ---------- */
+#scene-final{
+  background:var(--cream);
+  background-image:
+    radial-gradient(ellipse 300px 200px at 15% 20%, rgba(122,36,54,0.18), transparent 70%),
+    radial-gradient(ellipse 320px 220px at 88% 80%, rgba(122,36,54,0.18), transparent 70%);
+  padding:48px 16px 70px;
+}
+.final-card{max-width:480px;width:100%;padding:28px 22px;border:1px solid rgba(122,36,54,0.3);border-radius:8px;background:rgba(255,255,255,0.4);}
+.final-title{font-family:'Aref Ruqaa',serif;color:var(--wine-800);font-size:20px;margin-bottom:14px;}
+.final-text{font-family:'EB Garamond',serif;font-style:italic;color:var(--wine-700);font-size:15px;line-height:1.9;white-space:pre-line;text-align:right;}
+.heart{color:var(--wine-700);font-size:22px;margin-top:18px;}
+
+@media (max-width:420px){
+  .poem-text{font-size:15px;}
+  .fav-title{font-size:36px;}
+  .polaroid{width:112px;}
+  .scratch-wrap{height:112px;}
+  .date-fields input{width:48px;height:46px;font-size:16px;}
+  .date-fields input#yyyy{width:64px;}
+}
+</style>
+</head>
+<body>
+
+<div id="decor" aria-hidden="true">
+  <svg viewBox="0 0 120 100" fill="none">
+    <ellipse cx="20" cy="80" rx="16" ry="6" fill="#5a1a24" opacity="0.5"/>
+    <path d="M10 80 q0 -22 10 -22 q10 0 10 22 z" fill="#efe2cd"/>
+    <path d="M10 80 h20 v4 a10 4 0 0 1 -20 0 z" fill="#f4ebdd"/>
+    <path d="M30 68 q10 -2 8 8 q-2 8 -8 6" stroke="#7a2436" stroke-width="2.5" fill="none"/>
+    <ellipse cx="48" cy="80" rx="14" ry="5.5" fill="#5a1a24" opacity="0.5"/>
+    <path d="M39 80 q0 -19 9 -19 q9 0 9 19 z" fill="#efe2cd"/>
+    <path d="M39 80 h18 v3.5 a9 3.5 0 0 1 -18 0 z" fill="#f4ebdd"/>
+    <rect x="68" y="60" width="28" height="8" rx="1" fill="#93384a"/>
+    <rect x="70" y="52" width="24" height="8" rx="1" fill="#c9a24a"/>
+    <rect x="68" y="44" width="28" height="8" rx="1" fill="#7a2436"/>
+    <circle cx="102" cy="30" r="7" fill="#93384a"/>
+    <circle cx="110" cy="20" r="5" fill="#d98a95"/>
+    <circle cx="94" cy="20" r="5" fill="#c96b7a"/>
+    <path d="M102 34 q0 10 0 16" stroke="#3b6d11" stroke-width="2"/>
+  </svg>
+</div>
+
+<div id="transitionOverlay">
+  <span class="petal" style="left:8%;animation-delay:.02s;">🌸</span>
+  <span class="petal" style="left:20%;animation-delay:.12s;">🌹</span>
+  <span class="petal" style="left:33%;animation-delay:.04s;">🌸</span>
+  <span class="petal" style="left:46%;animation-delay:.18s;">🌺</span>
+  <span class="petal" style="left:58%;animation-delay:.08s;">🌹</span>
+  <span class="petal" style="left:70%;animation-delay:.22s;">🌸</span>
+  <span class="petal" style="left:82%;animation-delay:.05s;">🌺</span>
+  <span class="petal" style="left:92%;animation-delay:.15s;">🌹</span>
+</div>
+
+<section class="scene active" id="scene-lock">
+  <div class="moon"></div>
+  <div class="lock-icon">
+    <svg viewBox="0 0 64 64" fill="none">
+      <rect x="14" y="28" width="36" height="30" rx="6" fill="#7a2436"/>
+      <path d="M22 28V20a10 10 0 0 1 20 0v8" stroke="#7a2436" stroke-width="5" fill="none"/>
+      <circle cx="32" cy="42" r="4" fill="#f4ebdd"/>
+      <rect x="30" y="44" width="4" height="7" fill="#f4ebdd"/>
+    </svg>
+  </div>
+  <div class="tag">From: <b>ابراهيم</b> &nbsp; For: <b>ايمان</b></div>
+  <div class="date-label">أول يوم اتكلمنا فيه</div>
+  <div class="hint">yyyy / mm / dd</div>
+  <div class="date-fields">
+    <input type="tel" inputmode="numeric" maxlength="2" placeholder="يوم" id="dd">
+    <span>/</span>
+    <input type="tel" inputmode="numeric" maxlength="2" placeholder="شهر" id="mm">
+    <span>/</span>
+    <input type="tel" inputmode="numeric" maxlength="4" placeholder="سنة" id="yyyy">
+  </div>
+  <button class="unlock-btn" id="unlockBtn">فتح</button>
+</section>
+
+<section class="scene" id="scene-envelope">
+  <div class="envelope" id="envelope">
+    <div class="body"></div>
+    <div class="flap"><div class="seal">🌸</div></div>
+  </div>
+  <div class="open-hint">اضغطي عشان تفتحي</div>
+</section>
+
+<section class="scene" id="scene-poem">
+  <div class="poem-card fade-in">
+    <div class="poem-from">كل سنة وانتي طيبة يا ايمان 🤍</div>
+    <div class="poem-box">
+      <div class="poem-text">
+        <span class="stanza"><span class="line">رأيتُ الهلالَ ووجهَ الحبيبِ</span><span class="line">فكانا هلالَينِ عند النَّظرْ</span></span>
+        <span class="stanza"><span class="line">فلم أدرِ من حيرتي فيهما</span><span class="line">هلالَ الدجى مِن هلال البشرْ</span></span>
+        <span class="stanza"><span class="line">ولولا التورُّدُ في الوجنتين</span><span class="line">وما راعني من سواد الشَّعَرْ</span></span>
+        <span class="stanza"><span class="line">لكُنتُ أظن الهلالَ الحبيبَ</span><span class="line">وكنتُ أظن الحبيب القمرْ</span></span>
+      </div>
+    </div>
+    <button class="next-btn" id="toFlowers">التالي</button>
+  </div>
+</section>
+
+<section class="scene" id="scene-flowers">
+  <div class="flower-field"></div>
+  <div class="flowers-hint">دوسي هنا كمان</div>
+</section>
+
+<section class="scene" id="scene-favorite">
+  <div class="fav-title">Favorite person ↗</div>
+  <a class="song-card" href="https://www.youtube.com/watch?v=1MTa-KjKNos" target="_blank" rel="noopener">
+    <div class="song-art">▶</div>
+    <div class="song-meta">
+      <div class="song-name">أنا اتوب عن حبك</div>
+      <div class="song-artist">الشيخ إمام</div>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <div class="cards-wrap">
+    <div class="polaroid">
+      <div class="scratch-wrap">
+        <img src="scratch1.jpeg" alt="ذكرى">
+        <canvas class="scratch-canvas" data-label="امسحيني"></canvas>
+      </div>
+      <div class="cap">امسحيني</div>
+    </div>
+    <div class="polaroid">
+      <div class="scratch-wrap">
+        <img src="scratch2.jpeg" alt="ذكرى">
+        <canvas class="scratch-canvas" data-label="امسحيني"></canvas>
+      </div>
+      <div class="cap">امسحيني</div>
+    </div>
+    <div class="polaroid">
+      <div class="scratch-wrap">
+        <img src="scratch3.jpeg" alt="ذكرى">
+        <canvas class="scratch-canvas" data-label="امسحيني"></canvas>
+      </div>
+      <div class="cap">امسحيني</div>
+    </div>
+  </div>
+  <div class="scroll-hint" id="toFinal">دوسي هنا عشان اخر حاجة ↓</div>
+</section>
+
+<section class="scene" id="scene-final">
+  <div class="final-card fade-in">
+    <div class="final-title">آخر حاجة يا ايمان</div>
+    <div class="final-text" id="finalMessageText">اكتب هذي الرسالة وأنا أبعد عنك ألف الكيلومترات، وهذا لا يختلف كثيرا عما تعودنا عليه، لكن تلك الاحتمالات التي نتمناها أن نرى بعضنا لثواني تمحي كل هذه الخيالات، ويصبح الواقع هو ما يجمعنا.
+غيابك أعطاني درسا أن هناك من أنواع الاشتياق ما لا يعرف الإنسان معناها إلا إذا اختبر بعدها.
+
+لكن ما يؤنس وحدتي هو كلامك، ابتسامتك، ضحكتك، أعيش على أن أتذكر أن هناك من يجب أن أرجع إليه.
+
+أجلس أعد وأعد الليالي والأيام، أتذكر أحاديثنا، قهوتنا.
+أجلس أفكر حتى يأتي النوم، وتجلسي في حلمي تهونين علي وتقولين لي إنك دائما هنا لأجلي.</div>
+    <div class="heart">🤍</div>
+  </div>
+</section>
+
+<script>
+const dd = document.getElementById('dd');
+const mm = document.getElementById('mm');
+const yyyy = document.getElementById('yyyy');
+
+function autoAdvance(el, next, len, singleDigitOk){
+  el.addEventListener('input', ()=>{
+    el.value = el.value.replace(/[^0-9]/g,'').slice(0,len);
+    const v = el.value;
+    if(v.length === len && next){ next.focus(); return; }
+    if(singleDigitOk && v.length === 1 && next){
+      const firstDigit = parseInt(v,10);
+      if(!singleDigitOk.includes(firstDigit)){
+        next.focus();
+      }
+    }
+  });
+}
+autoAdvance(dd, mm, 2, [0,1,2,3]);
+autoAdvance(mm, yyyy, 2, [0,1]);
+autoAdvance(yyyy, null, 4);
+
+function checkPassword(){
+  const d = parseInt(dd.value,10);
+  const m = parseInt(mm.value,10);
+  const y = parseInt(yyyy.value,10);
+  if(d===28 && m===5 && y===2024){
+    goTo('scene-envelope');
+  } else {
+    const scene = document.getElementById('scene-lock');
+    scene.classList.add('shake');
+    setTimeout(()=>{
+      scene.classList.remove('shake');
+      dd.value=''; mm.value=''; yyyy.value='';
+      dd.focus();
+    }, 600);
+  }
+}
+document.getElementById('unlockBtn').addEventListener('click', checkPassword);
+yyyy.addEventListener('keydown', e=>{ if(e.key==='Enter') checkPassword(); });
+
+function goTo(id){
+  const overlay = document.getElementById('transitionOverlay');
+  overlay.classList.add('show');
+  setTimeout(()=>{
+    document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id === 'scene-favorite'){
+      requestAnimationFrame(()=>{
+        document.querySelectorAll('.scratch-canvas').forEach(resizeCanvas);
+      });
+    }
+  }, 420);
+  setTimeout(()=> overlay.classList.remove('show'), 950);
+}
+
+const envelope = document.getElementById('envelope');
+document.getElementById('scene-envelope').addEventListener('click', ()=>{
+  envelope.classList.add('opening');
+  setTimeout(()=> goTo('scene-poem'), 650);
+});
+
+document.getElementById('toFlowers').addEventListener('click', ()=> goTo('scene-flowers'));
+document.getElementById('scene-flowers').addEventListener('click', ()=> goTo('scene-favorite'));
+document.getElementById('toFinal').addEventListener('click', ()=> goTo('scene-final'));
+
+const canvasState = new Map();
+
+function resizeCanvas(canvas){
+  const wrap = canvas.parentElement;
+  const w = wrap.clientWidth;
+  const h = wrap.clientHeight;
+  if(w === 0 || h === 0) return;
+  canvas.width = w;
+  canvas.height = h;
+  drawScratchLayer(canvas);
+}
+
+function drawScratchLayer(canvas){
+  const ctx = canvas.getContext('2d');
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = '#3a2a20';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  for(let i=0;i<160;i++){
+    ctx.fillStyle = Math.random()>0.5 ? '#4a3226' : '#2e2015';
+    const s = 3+Math.random()*10;
+    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, s, s);
+  }
+  ctx.fillStyle='rgba(244,235,221,0.85)';
+  ctx.font='600 14px Cairo, sans-serif';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.fillText(canvas.dataset.label || 'Scratch me', canvas.width/2, canvas.height/2);
+}
+
+function pos(canvas, e){
+  const r = canvas.getBoundingClientRect();
+  const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+  const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+  return {x:cx,y:cy};
+}
+
+function erase(canvas, e){
+  const ctx = canvas.getContext('2d');
+  const p = pos(canvas, e);
+  ctx.globalCompositeOperation='destination-out';
+  ctx.beginPath();
+  ctx.arc(p.x,p.y,22,0,Math.PI*2);
+  ctx.fill();
+}
+
+function checkClear(canvas){
+  const ctx = canvas.getContext('2d');
+  if(canvas.width===0||canvas.height===0) return;
+  const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  let cleared=0, total=0;
+  for(let i=3;i<data.length;i+=4*20){ total++; if(data[i]<40) cleared++; }
+  if(total>0 && cleared/total > 0.55){
+    canvas.style.transition='opacity .4s';
+    canvas.style.opacity='0';
+    setTimeout(()=>{ canvas.style.pointerEvents='none'; }, 400);
+  }
+}
+
+function initScratch(canvas){
+  let drawing=false;
+  canvas.addEventListener('mousedown', e=>{drawing=true; erase(canvas,e);});
+  canvas.addEventListener('mousemove', e=>{ if(drawing){ erase(canvas,e); checkClear(canvas); }});
+  window.addEventListener('mouseup', ()=>drawing=false);
+  canvas.addEventListener('touchstart', e=>{drawing=true; erase(canvas,e); e.preventDefault();}, {passive:false});
+  canvas.addEventListener('touchmove', e=>{ erase(canvas,e); checkClear(canvas); e.preventDefault();}, {passive:false});
+  canvas.addEventListener('touchend', ()=>drawing=false);
+  window.addEventListener('resize', ()=>{
+    if(canvas.closest('.scene').classList.contains('active')) resizeCanvas(canvas);
+  });
+}
+document.querySelectorAll('.scratch-canvas').forEach(initScratch);
+</script>
+</body>
+</html>
